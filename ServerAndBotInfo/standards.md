@@ -1,7 +1,8 @@
 # Standards for the Gibson Discord Server Project
 
 1. Follow [pep-8](https://peps.python.org/pep-0008/) when writing python code  
-2. File naming: snake_case (always include extensions even if your OS doesn't require it).  
+2. File naming: snake_case  
+(always include extensions even if your OS doesn't require it).  
 ie. "server_overview.md"
 3. Folders use CamelCase.  
 ie. ServerAndBotInfo  
