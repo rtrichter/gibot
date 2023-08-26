@@ -2,7 +2,7 @@ import json
 from os import path
 import discord
 
-rainbow_role_update_period_s = 1 # once per hour
+rainbow_role_update_period_s = 3600 # once per hour
 
 DATA = path.join(path.realpath(__file__), "../../Data")
 
@@ -16,3 +16,5 @@ def get_guild(client) -> discord.Guild:
 
 def get_role(guild, role_name: str) -> discord.Role:
     return guild.get_role(get_config("role_ids")[role_name])
+
+
