@@ -25,5 +25,6 @@
         "yellow": 16776960,
         "black": 0,
         "pink": 16711935
-    }
+    },
+    "rainbow_role_update_period_s": 3600 
 }
