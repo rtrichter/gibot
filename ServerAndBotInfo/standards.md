@@ -12,3 +12,6 @@ Some exceptions (like README.md and .gitignore are fine)
 This make the code easier to develop and maintain, prevents conflicts between developers working on different subsystems, and more. Just make subsystems.  
 (Subsystems should be split into files that are combined into a module and included by a main file)
 5. 
+
+
+
