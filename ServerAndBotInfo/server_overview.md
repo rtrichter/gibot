@@ -35,3 +35,14 @@ In the future, the bot may be able to access this information. Members may choos
 By default no one can access personal information unless it is allowed by the user.  
 Editing personal information does NOT implicitly grant access for any party (bot, member, or admin) to access information
 
+### Interests
+Roles are used to identify other Gibson members with similar interests.  
+It will also unlock channels to talk to other members of your floor.  
+
+### Pronouns and Gender
+Commands are used to set your preferred gender and pronouns.  
+You can also set this information in your discord profile but we are aware that you may not want that information to be seen in other servers.  
+
+If your pronouns or gender are not common don't worry!
+Just tell Gibot your pronouns or gender and you will get a new role for your pronouns or gender.  
+Gibot will accommodate any gender/pronouns you enter (don't abuse this... ([rules](rules)))
