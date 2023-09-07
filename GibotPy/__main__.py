@@ -12,7 +12,7 @@ async def on_ready():
     bot.guild = bot.bot.get_guild(constants.get_config("guild_id"))
 
     # start loops
-    await rainbow_role.rainbow_role_update() # starts the rainbow update loop
+    await rainbow_role.rainbow_role_update_loop() # starts the rainbow update loop
 
 
 with open(path.join(constants.DATA, "gibot_token.txt"), 'r') as t:
