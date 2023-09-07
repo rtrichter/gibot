@@ -12,7 +12,15 @@ previous_color = 0
 async def rainbow_role_update():
     """Assigns a random color to the rainbow color role every hour"""
     # make sure that the color is different than the last color
+    count = 0
     while True:
+        # these lines just ensure that if something breaks with the random 
+        # generation breaks (maybe it uses the same seed repeatedly for some
+        # reason) the program will not get stuck
+        count += 1
+        if count > 10000:
+            print("Could not get a new color")
+            return
         # get a new color
         new_color = random.choice(
             list(constants.get_config("color_hex").values()))
@@ -28,7 +36,7 @@ async def rainbow_role_update_loop():
     # wait until the bot is ready
     await bot.bot.wait_until_ready()
 
-    rainbow_role_update()
+    await rainbow_role_update()
 
     # delay until the next loop
     await asyncio.sleep(constants.get_config("rainbow_role_update_period_s"))
