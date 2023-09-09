@@ -1,10 +1,8 @@
 # gibot_token is the real token. 
 # No developer has this as it is only stored on the server running Gibot
-*/gibot_token.txt
-
-# This is the test token used by developers for testing code
-*/test_token.txt
+Data/gibot_token.txt
+.env
 
 venv
 
-*/__pycache__
+**/__pycache__

@@ -17,8 +17,12 @@ This makes the code easier to develop and maintain, prevents conflicts between d
 
 ## Units
 When making variable names, always append the units as a suffix  
-Use common abbreviations when possible. If the units don't have a common abbreviation, add them here
-
+Use common abbreviations when possible. If the units don't have a common abbreviation, don't use them 
+...or NOT PREFERRED: add them here. This should only be done if the suffix would be cumbersomely long. ie kilogrammeterpersecond could be abbreviated because it is cumbersome to write repeatedly. Obviously this uses common metric prefixes and units. For situations like this:
+1. when 2 units are multiplied by each other (ie Newton-seconds) combine the 2 with no connecting characters (Ns)
+2. use a p (for per) when dividing units. If the abbreviation becomes confusing (if p may be interpreted as something else like pico or Peta) then write out "\_per\_".  
+  For example meters per second would look like mps or m_per_s.  
+  The underscores are used to further specify that the per is not some combination of units/prefixes.  
 
 
 ### Units Chart
