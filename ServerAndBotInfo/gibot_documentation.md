@@ -4,129 +4,88 @@ Pull requests will not be accepted without documentation.
 Documentation ensures that another developer can understand and maintain your code
 
 # TOC
-- [rainbow_role.py](#rainbow_rolepy)
-  - [previous_color](#previous_color)
-  - [rainbow_role_update()](#rainbow_role_update)
-  - [rainbow_role_update_loop()](#rainbow_role_update_loop)
-- [constants.py](#constantspy)
-  - [DATA](#data)
-  - [get_config](#get_config)
-  - [get_role](#get_role)
-- [bot.py](#botpy)
-  - [intents](#intents)
-  - [bot](#bot)
-  - [guild](#guild)
-- [\_\_main\_\_](#__main__py)
-  - [on_ready()](#on_ready)
-  - [token and run](#token_and_run)
 
-# rainbow_role.py
-### previous_color
-previous_color stores an integer associated with the hex value of a color  
-When a new color is selected, we check against the previous color to ensure that the color changes every time [rainbow_role_update](#rainbow_role_update) runs  
 
-### rainbow_role_update()
-definition:
-```python
-async def rainbow_role_update():
-```
+## Hikari things...
+[This guy has some super helpful tutorials](https://www.youtube.com/@Carberra)
+[Hikari (bot api) docs](https://docs.hikari-py.dev/en/latest/)
+[Lightbulb (command handler) docs](https://hikari-lightbulb.readthedocs.io/en/latest/index.html)
 
-Usage:  
-This function will change the color of the rainbow role.  
-This function should not be called frequently!  
-Discord will rate limit the bot if this function runs too often.  
-For safety, do not call this function other than a SINGLE instance of the [rainbow_role_update_loop()](#rainbow_role_update_loop)  
 
-Details:
-The same color will never be selected twice in a row  
+## File Structure
+GibotPy
+|---extensions  
+|------\_\_init\__.py  
+|------rainbow_role.py  
+|---utils  
+|------\_\_init\__.py  
+|------config.py  
+|---\_\_init\__.py  
+|---\_\_main__.py  
+|---bot.py  
 
-### rainbow_role_update_loop()
-definition:
-```python
-async def rainbow_role_update_loop()
-```
+From what I can tell now there should be nothing other than \_\_main__, \_\_init__, and bot.py in the top-level package.  
+Everything else should be in utils or extensions (or maybe a plugin directory but I haven't learned how those work yet. Hopefully I remember to update this when I do find out how they work)
 
-Usage:
-This function is a wrapper for [rainbow_role_update()](#rainbow_role_update).  
-The function will ensure that rainbow_role_update() runs periodically (at intervals defined by config.json -> rainbow_role_update_period_s)
+## Extensions
+Extensions are used to keep our code organized.  
+Think of an extension as a file that contains a set of features.  
+Packages are ok if you are working with a large set of _related_ features. Unrelated features should remain in their own files.  
+(For example everything related to reaction handling will likely be handled in either one file or one package depending on the level of organization necessary)
 
-Details:
-This function should only be called ONCE!!!
-Running the update too often will result in rate limiting of the bot
+### Rules for Extensions: 
+All extensions must include an initialize() function.  
+This may not be necessary by hikari's standards HOWEVER, some files may require an initialization and for consistency I would like to have one in every extension.  
+This will make debugging easier. You can check if an extension was initialized by checking the part of \__main__ that contains all extension initializations.  
+This also forces whoever develops an extension to thoroughly check all of their code is being initialized properly.  
+Some features will initialize themselves (for example tasks have an autostart parameter that we DO NOT USE). Explicit initialization of the tasks is important for the reason above. 
+It will be easier to check for all initializations in one place rather than checking each function for their auto_start parameter. 
+Additionally, include a print statement that indicates that the function was run. 
 
-# constants.py
-### DATA
-A path to the Data directory
+This explanation may have been confusing but feel free to ask questions about it. The general idea is don't rely on hikari to automatically start anything unless it does so by default.  
 
-### get_config()
-definition:
-```python
-def get_config(key: str):
-```
-Parameters:
-key: str -> name of the key in config.json that you wish to retrieve
+All of this will help to prevent imports from not being accessed, it will make debugging easier, and will make all extensions consistent with each other.  
 
-Return Value:
-The value stored at the key passed to the function in config.json
+## \_\_main__.py
+First, import bot.py from the top level package. This will run at the end of this file.  
+Next, import and initialize all extensions.  (maybe plugins too but idk yet)  
+Finally, run the bot. This is protected so that it only runs if you run the GibotPy package.  
+If you ever need any of this code for your own project you could import the package without running anything related to Gibot.  
 
-Usage:  
-pass in a key and get the config value for that key.  
+## bot.py
+The token is kept in a separate file to keep it secret. Eventually we will have a better method of distributing a test token on a test server.  
+After getting the token, we load the bot.  
+Then load the tasks. (honestly I'm not sure what exactly this does but its needed for tasks)  
 
-### get_role()
-NOTE: I expect this function to change at some point but its usage should remain the same. (only the internals change, but input and output remain the same)
-definition:
-```python
-def get_role(guild, role_name: str) -> discord.Role:
-```
+Then we have a command and a listener that can be used to ensure that the bot is working properly if something else is going wrong.  
+/say will just echo whatever you tell it to say in the text option  
+ping will send pong to the channel that you send the ping in (when you ping @Gibot)  
 
-Parameters:
-guild -> a discord.Guild object, because Gibot only uses one server this is the guild defined in __main\__.py and bot.py
-name: str -> name of the role that you wish to access
+Finally, we define the run function (which is run from \_\_main__.py).  
 
-Return Value:
-discord.Role object 
+## rainbow_role.py
+using lightbulb.ext.tasks to schedule the change_rainbow_color() function.  
+Repeats every hour  
 
-Usage:
-Pass the guild and name of the role you would like to get to receive a discord.Role object  
-Roles must be loaded into config.json -> role_ids to be accessed using this function
+### change_rainbow_color()
+1. gets colors from config
+2. gets a new random color (repeats until the random color is different from the previous color)
+3. edit the rainbow role's color
 
-# bot.py
-### intents  
-contains the intents given to Gibot (currently using Intents.all(). This may change)
-### bot  
-used for pretty much everything. This is how you access servers, members, roles, etc.  
-For those who have used discord.Client before, this is an extension of client. All functionality available to clients are available to bot. 
-### guild  
-Contains information about the server.  
-It is initially assigned to None and updated in on_ready in __main\__.py
+### initialize()
+Starts the rainbow role task
 
-### Loops and Background Tasks
-Honestly idk what happened with loops.  
-I tried to get them working for a few hours and ended up giving up on them.  
-discord.py has built in task scheduling but I couldn't get it working.  
-Instead, I decided to use a recursive structure to keep loops running:  
-Write a wrapper function for any task. Here is an example:
-```python
-async def rainbow_role_update_loop():
-    # wait until the bot is ready
-    await bot.bot.wait_until_ready()
 
-    rainbow_role_update()
+## config.py
+Makes it easier to load stuff from Data/config.json
 
-    # delay until the next loop
-    await asyncio.sleep(constants.get_config("rainbow_role_update_period_s"))
-    # idk what's going on with the loops so after the 
-    # delay just call the function again
-    # IMPORTANT!!! Call the wrapper NOT the function being wrapped
-    await rainbow_role_update_loop() 
-```
+### get_config(key)
+use get_config and pass the key from config.json that you are looking for.  
 
-# \_\_main\_\_.py
-## on_ready()
-Runs after the bot is initialized  
-1. Print to the console to indicate that the bot is ready
-2. update the guild defined in bot.py
-3. start any loops
+
+
+
+
 
 ## token and run
 The token is stored in a separate file so that it will not be shared through the source code.  
