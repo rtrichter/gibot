@@ -1,5 +1,5 @@
 import lightbulb
-import json
+import pickle
 from os import path, listdir
 from GibotPy.utils import config
 
@@ -12,20 +12,44 @@ plugin = lightbulb.Plugin("ReactionPlugin")
 
 
 class ReactionCommandGroup:
+    _SAVE_DIR = path.join(DATA, "reaction_commands")
+
+    @staticmethod
+    def load_from_id(message_id):
+        with open(path.join(ReactionCommandGroup._SAVE_DIR, str(message_id)), "rb") as f:
+            return pickle.load(f)
+
     def __init__(self, message_id):
-        self.message_id = message_id
-        self.commands = {} #key=emoji, value=ReactionCommand object
+        self._message_id = message_id
+        self._rate_limit_min = 0
+        self._commands = {} #key=emoji, value=ReactionCommand object
+    
+    def set_rate_limit(self, rate_limit_min):
+        self.rate_limit = rate_limit_min
 
     def save(self):
-        with open():
-            pass
+        with open(path.join(ReactionCommandGroup._SAVE_DIR, str(self._message_id)), "wb") as f:
+            return pickle.dump(self, f)
 
 class ReactionCommandAlreadyExistsError(Exception):
     pass
 
 
 class ReactionCommand:
-    def __init__(self, parent: ReactionCommandGroup, execution_scheme, usage_scheme, emoji):
+    VALID_SCHEMES = {
+        "reaction_role": [
+            "add/remove",
+            "remove/add",
+            "[0-9]+_times"
+        ]
+    }
+    def __init__(
+            self, 
+            parent: ReactionCommandGroup, 
+            execution_scheme, 
+            usage_scheme, 
+            emoji,
+            **kwargs):
         """
         parent is the group that the ReactionCommand belongs to
         execution_scheme: the kind of reaction command that this is
@@ -34,12 +58,19 @@ class ReactionCommand:
         self.execution_scheme = execution_scheme
         self.usage_scheme = usage_scheme 
         self.emoji = emoji
-        if parent.commands.has_key(emoji):
+        if emoji in parent._commands.keys():
+            # raising an exception allows us to handle the problem with output
+            # to the user. 
+            # __init__ cannot be async so we can't do anything more than print
+            # if this point of the code is reached
             raise ReactionCommandAlreadyExistsError
-            # not sure if this is reachable but if it is, 
-            # it stops us from overwriting anything
-            return 
-        parent.commands[emoji] = self
+        parent._commands[emoji] = self
+
+        if execution_scheme == "reaction_role":
+            self.role = kwargs.pop("role")
+
+    def save(self):
+        self.parent.save()
 
 
 
