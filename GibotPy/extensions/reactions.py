@@ -10,25 +10,25 @@ plugin = lightbulb.Plugin("ReactionPlugin")
 
     
 
+REACTION_SAVE_DIR = path.join(DATA, "reaction_commands")
 
 class ReactionCommandGroup:
-    _SAVE_DIR = path.join(DATA, "reaction_commands")
 
     @staticmethod
     def load_from_id(message_id):
-        with open(path.join(ReactionCommandGroup._SAVE_DIR, str(message_id)), "rb") as f:
+        with open(path.join(REACTION_SAVE_DIR, str(message_id)), "rb") as f:
             return pickle.load(f)
 
-    def __init__(self, message_id):
+    def __init__(self, message_id, rate_limit=0):
         self._message_id = message_id
-        self._rate_limit_min = 0
+        self._rate_limit = 0
         self._commands = {} #key=emoji, value=ReactionCommand object
     
     def set_rate_limit(self, rate_limit_min):
         self.rate_limit = rate_limit_min
 
     def save(self):
-        with open(path.join(ReactionCommandGroup._SAVE_DIR, str(self._message_id)), "wb") as f:
+        with open(path.join(REACTION_SAVE_DIR, str(self._message_id)), "wb") as f:
             return pickle.dump(self, f)
 
 class ReactionCommandAlreadyExistsError(Exception):
