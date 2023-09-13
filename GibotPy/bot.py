@@ -16,6 +16,11 @@ bot = lightbulb.BotApp(
 )
 tasks.load(bot)
 
+
+EXT = path.join(path.dirname(__file__), "extensions")
+
+bot.load_extensions_from(EXT)
+
 # say and ping are just test commands that can be used to make sure the bot is working
 # decorator to make a command
 @bot.command()
