@@ -3,7 +3,9 @@ import random
 from lightbulb.ext import tasks
 import os
 from GibotPy.utils import config
-from GibotPy.bot import bot
+# from GibotPy.bot import bot
+
+plugin = lightbulb.Plugin("RainbowPlugin")
 
 last_color = 0
 @tasks.task(s=config.get_config("rainbow_role_update_period_s"))
@@ -25,13 +27,14 @@ async def change_rainbow_color():
         # select a random 
         new_color = random.choice(list(colors.keys()))
     # update the color
-    await bot.rest.edit_role(config.get_config("guild_id"), config.get_config("role_ids")["rainbow"], color=colors[new_color])
+    await plugin.bot.rest.edit_role(config.get_config("guild_id"), config.get_config("role_ids")["rainbow"], color=colors[new_color])
+    
     
 
-def initialize():
-    """
-    This is used to initialize any commands, tasks, etc. in this file
-    """
-    print("Initializing rainbow role")
+def load(bot: lightbulb.BotApp):
+    bot.add_plugin(plugin)
     change_rainbow_color.start()
+
+def unload(bot: lightbulb.BotApp):
+    bot.remove_plugin(plugin)
 
