@@ -6,7 +6,6 @@ from os import path, listdir, remove
 from GibotPy.utils import config
 
 DATA = path.join(path.dirname(__file__), "../../Data")
-print(listdir(DATA))
 
 plugin = lightbulb.Plugin("ReactionPlugin")
 
@@ -87,7 +86,6 @@ class ReactionRole:
 @lightbulb.command("rr_init", "Creates a new reaction command")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def rr_init(ctx: lightbulb.SlashContext):
-    print(f"Creating new reaction_role command...")
     ReactionRole(ctx.options.channel_id, ctx.options.message_id, ctx.options.usage_scheme)
     await ctx.respond("Reaction Role initialized")
 
@@ -100,7 +98,6 @@ async def rr_init(ctx: lightbulb.SlashContext):
 @lightbulb.command("rr_add", "adds a reaction function to the reaction command")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def rr_add(ctx: lightbulb.SlashContext):
-    print(f"Adding command ({ctx.options.emoji}) to reaction command group ({ctx.options.message_id})")
     # load the command group
     group = ReactionRole.load(ctx.options.channel_id, ctx.options.message_id)
     group.add(ctx.options.emoji, ctx.options.role)
@@ -115,7 +112,6 @@ async def rr_add(ctx: lightbulb.SlashContext):
 @lightbulb.command("rr_rm", "removes a reaction function from the reaction command")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def rr_rm(ctx: lightbulb.SlashContext):
-    print(f"Removing command ({ctx.options.emoji}) from reaction command group ({ctx.options.message_id})")
     # load the command group
     group = ReactionRole.load(ctx.options.channel_id, ctx.options.message_id)
     group.remove(ctx.options.emoji)
@@ -129,7 +125,6 @@ async def rr_rm(ctx: lightbulb.SlashContext):
 @lightbulb.implements(lightbulb.SlashCommand)
 async def rr_info(ctx: lightbulb.SlashContext):
     group = ReactionRole.load(ctx.options.channel_id, ctx.options.message_id)
-    print(group)
     await ctx.respond(str(group))
 
 @plugin.listener(hikari.events.ReactionAddEvent)
